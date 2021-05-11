@@ -37,7 +37,7 @@ $businessType = mysqli_real_escape_string($conn, $_REQUEST['businessType']);
 $location = mysqli_real_escape_string($conn, $_REQUEST['location']);
 
 // Retrieve Data for businesses
-$sql = "SELECT business_name, address_line1, address_line2, city_id, state_name, phone_no, zipcode FROM BUSINESS 
+$sql = "SELECT business_id, business_name, address_line1, address_line2, city_id, state_name, phone_no, zipcode FROM BUSINESS 
         LEFT JOIN STATE ON STATE.state_id = BUSINESS.state_id
         WHERE city_id = '$location' 
         AND business_type_id ='$businessType'";
@@ -55,16 +55,36 @@ echo " <div align=\"right\"><input type=\"button\" name=\"close\" onclick=\"clos
                 <th>Business Name</th>
                 <th>Business Address</th>
                 <th>Phone Number</th>
-                <th>Services Offered -> Estimated Wait Time</th>
+                <th>Services Offered</th>
+                <th>Estimated Wait Time</th>
                 <th>Check-In</th>
               </tr></thead>";
 
    // Loop through the result set
     while($row = mysqli_fetch_assoc($result)) {
-
+        
+        // Retrieve Data for businesses
+        $businessId = $row["business_id"];
+        $sql_services = "SELECT service_id, service_name FROM SERVICES WHERE service_id IN (SELECT service_id FROM BUSINESS_SERVICE_RLT where business_id = '$businessId')";
+        
+        // Find all the services for each business
+        $result_services = $conn->query($sql_services);
+        $services_list= "<ul>";
+        // Iterate the list of services and create a comma seperated list of services
+        while($row_services = mysqli_fetch_assoc($result_services)) {
+            $services_list .= "<li>";
+            $services_list .= $row_services["service_name"]. "</li>";
+        }
+        $services_list .= "</ul>";
+        
+        //Find wait time for all the businesses
+        
+        
+        //Paint HTML
         echo "<tr> <td> " . $row["business_name"]. 
             "</td> <td> " . $row["address_line1"]. " " . $row["address_line2"]. " " . $row["zipcode"]. " " . $row["state_name"]. 
             "</td> <td>"  . $row["phone_no"].
+            "</td> <td>"  . $services_list.
             "</td> <td>"  . $row["phone_no"].
             "</td> <td align =\"center\"><button >Check-In</button></td>";
         }
