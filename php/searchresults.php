@@ -2,13 +2,14 @@
 <html>
 <head>
     <style>
-        table {
+        .table {
         border: 1;
         width: 100%;
         color: #588c7e;
         font-family: monospace;
-        font-size: 25px;
+        font-size: 18px;
         text-align: left;
+        max-width:100%;
         }
         th {
         background-color: #588c7e;
@@ -56,7 +57,7 @@ echo " <div align=\"right\"><input type=\"button\" name=\"close\" onclick=\"clos
                 <th>Business Address</th>
                 <th>Phone Number</th>
                 <th>Services Offered</th>
-                <th>Estimated Wait Time</th>
+                <th>Estimated Wait Time (HH:MM:SS)</th>
                 <th>Check-In</th>
               </tr></thead>";
 
@@ -78,14 +79,27 @@ echo " <div align=\"right\"><input type=\"button\" name=\"close\" onclick=\"clos
         $services_list .= "</ul>";
         
         //Find wait time for all the businesses
+        $sql_customer_wait_time = "SELECT SEC_TO_TIME( SUM( TIME_TO_SEC( SERVICES.service_time) ) ) AS CUSTOMER_WAIT_TIME
+                FROM BUSINESS_SERVICE_RLT, SERVICES , CUSTOMER_SERVICE_RLT 
+                WHERE
+                BUSINESS_SERVICE_RLT.business_id  ='$businessId'
+                AND BUSINESS_SERVICE_RLT.service_id = SERVICES .service_id
+                AND CUSTOMER_SERVICE_RLT.status_id  =  1
+                AND BUSINESS_SERVICE_RLT.business_service_rlt_id = CUSTOMER_SERVICE_RLT.business_service_rlt_id ;";
         
+        $result_customer_wait_time = $conn->query($sql_customer_wait_time);
+        $customer_wait_time;
+        while($row_customer_wait_time = mysqli_fetch_assoc($result_customer_wait_time)) {
+            $customer_wait_time = $row_customer_wait_time["CUSTOMER_WAIT_TIME"];
+        }
+        if ($customer_wait_time == null){$customer_wait_time ="No Wait Time";}
         
         //Paint HTML
         echo "<tr> <td> " . $row["business_name"]. 
-            "</td> <td> " . $row["address_line1"]. " " . $row["address_line2"]. " " . $row["zipcode"]. " " . $row["state_name"]. 
+            "</td> <td> " . $row["address_line1"]. " <BR> " . $row["address_line2"]. " <BR>" . $row["zipcode"]. " <BR>" . $row["state_name"]. 
             "</td> <td>"  . $row["phone_no"].
             "</td> <td>"  . $services_list.
-            "</td> <td>"  . $row["phone_no"].
+            "</td> <td>"  . $customer_wait_time.
             "</td> <td align =\"center\"><button >Check-In</button></td>";
         }
       } else {
