@@ -38,7 +38,7 @@ $businessType = mysqli_real_escape_string($conn, $_REQUEST['businessType']);
 $location = mysqli_real_escape_string($conn, $_REQUEST['location']);
 
 // Retrieve Data for businesses
-$sql = "SELECT business_id, business_name, address_line1, address_line2, city_id, state_name, phone_no, zipcode FROM BUSINESS 
+$sql = "SELECT business_id, business_name, address_line1, address_line2, city_id, state_name, phone_no, zipcode, business_type_id FROM BUSINESS 
         LEFT JOIN STATE ON STATE.state_id = BUSINESS.state_id
         WHERE city_id = '$location' 
         AND business_type_id ='$businessType'";
@@ -100,7 +100,7 @@ echo " <div align=\"right\"><input type=\"button\" name=\"close\" onclick=\"clos
             "</td> <td>"  . $row["phone_no"].
             "</td> <td>"  . $services_list.
             "</td> <td>"  . $customer_wait_time.
-            "</td> <td align =\"center\"><button >Check-In</button></td>";
+            "</td> <td align =\"center\"><button id=\"checkIn\" onclick=\"showCheckIn('" . $row["business_id"]. "','" . $row["business_name"]. "','" . $row["business_type_id"]."')\" >Check-In</button></td>";
         }
       } else {
          //echo "<tr> Sorry, No Results found for your Search !! </tr>" 
@@ -114,11 +114,3 @@ mysqli_close($conn);
    
 </body>
 </html>
-
-
-
-
-
-
-
-   

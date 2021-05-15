@@ -35,6 +35,14 @@
 			document.getElementById ('loadingmessage').style.zIndex='0';
   			document.getElementById("overlay").style.display = "none";
 		}
+		
+		function showCheckIn (business_id, business_name, business_type_id){
+			alert ('business_name : ' +business_name +'business_id : ' +business_id + 'business_name : ' +business_type_id);
+		  	
+	        window.location = "php/checkIn.php?business_type_id=" + business_type_id + "&business_id=" + business_id + "&business_name="+ business_name;
+	       
+		
+		}
 	</script>
 	<style>
 		 table {
@@ -86,10 +94,15 @@
 			  <div id="overlay" style="display:none">			  		
 			  	
 			  </div>
+			  
 
 			  <div id='loadingmessage' style='display:none' width="100%" align="center">
 	      			 <img src='img/ajax-loader.gif'/>
 				</div>
 
+   
 </body>
 </html>
+
+</body>
+</html>	
